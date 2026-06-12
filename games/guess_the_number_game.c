@@ -6,7 +6,7 @@
 void play_game();
 
 int main() {
-    srand(time(NULL));
+    srand((unsigned int)time(NULL));
     
     while (1) {
         play_game();
@@ -14,7 +14,10 @@ int main() {
         char choice;
         printf("\nDo you want to play again? (y/n): ");
         fflush(stdout);
-        scanf(" %c", &choice);
+        if (scanf(" %c", &choice) != 1) {
+            printf("\nExiting the game. Goodbye!\n");
+            break;
+        }
 
         if (tolower(choice) != 'y') {
             printf("Exiting the game. Goodbye!\n");

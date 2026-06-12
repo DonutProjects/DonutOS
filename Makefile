@@ -1,6 +1,6 @@
 include config.mk
 
-PHONY := all rebuild progs init shell utils games initramfs iso qemu clean
+PHONY := all rebuild progs init shell utils games DonutOS iso qemu clean
 
 all: iso
 
@@ -24,11 +24,11 @@ games:
 	@echo "Making games"
 	@$(MAKE) -C games
 
-initramfs: progs
-	@echo "Packing initramfs"
+DonutOS: progs
+	@echo "Packing DonutOS"
 	@cd build && find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../DonutOS
 
-iso: initramfs
+iso: DonutOS
 	@echo "Making ISO"
 	@mkdir -p iso/boot/grub
 	@cp kernel/kernel iso/

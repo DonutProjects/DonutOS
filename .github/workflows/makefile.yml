@@ -9,25 +9,61 @@ on:
 
 jobs:
   build:
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: x86_64-iso+initramfs
+            zig_target: x86_64-linux-musl
+            additional_deps: "xorriso mtools"
+          - name: aarch64-initramfs
+            zig_target: aarch64-linux-musl
+            additional_deps: ""
+          - name: x86-initramfs
+            zig_target: x86-linux-musl
+            additional_deps: ""
+
     steps:
-      - name: Checkout source
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install build dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential make gcc xorriso mtools
+          sudo apt install -y build-essential ${{ matrix.additional_deps }}
 
-      - name: Build project
-        run: make all
+      - name: Set up Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: latest
 
-      - name: Upload build artifacts
+      - name: Build DonutOS
+        run: |
+          make clean
+
+          if [ "${{ matrix.name }}" = "x86_64-iso+initramfs" ]; then
+            make CC="zig cc -target ${{ matrix.zig_target }}" -j$(nproc) all
+          else
+            make CC="zig cc -target ${{ matrix.zig_target }}" -j$(nproc) DonutOS
+          fi
+
+      - name: Prepare artifact
+        run: |
+          mkdir -p dist
+          
+          if ls DonutOS-*.iso >/dev/null 2>&1; then
+            cp DonutOS dist/
+            cp DonutOS-*.iso dist/
+          else
+            mv DonutOS dist/
+          fi
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-output
-          path: |
-            ./DonutOS*.iso
-            ./DonutOS
-          if-no-files-found: ignore
+          name: DonutOS-${{ matrix.name }}
+          path: dist/
+          if-no-files-found: error

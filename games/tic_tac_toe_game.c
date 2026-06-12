@@ -12,7 +12,7 @@ static void init_board(char b[SIZE][SIZE]) {
             b[i][j] = ' ';
 }
 
-static void print_board(const char b[SIZE][SIZE]) {
+static void print_board(char b[SIZE][SIZE]) {
     printf("\n    1   2   3\n");
     for (int i = 0; i < SIZE; ++i) {
         printf(" %d  ", i + 1);
@@ -26,14 +26,14 @@ static void print_board(const char b[SIZE][SIZE]) {
     printf("\n");
 }
 
-static bool is_moves_left(const char b[SIZE][SIZE]) {
+static bool is_moves_left(char b[SIZE][SIZE]) {
     for (int i = 0; i < SIZE; ++i)
         for (int j = 0; j < SIZE; ++j)
             if (b[i][j] == ' ') return true;
     return false;
 }
 
-static char check_winner(const char b[SIZE][SIZE]) {
+static char check_winner(char b[SIZE][SIZE]) {
     for (int i = 0; i < SIZE; ++i) {
         if (b[i][0] != ' ' && b[i][0] == b[i][1] && b[i][1] == b[i][2]) return b[i][0];
         if (b[0][i] != ' ' && b[0][i] == b[1][i] && b[1][i] == b[2][i]) return b[0][i];

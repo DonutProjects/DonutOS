@@ -8,4 +8,4 @@ all: $(TARGETS)
 
 $(BIN_BUILD_DIR)/%: %.c
 	@mkdir -p $(BIN_BUILD_DIR)
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CROSS_COMPILE)$(CC) $(CFLAGS) $< $(LDFLAGS) $(LDLIBS) -o $@

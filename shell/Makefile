@@ -8,4 +8,4 @@ all: $(DOSH_BIN)
 #dosh
 $(DOSH_BIN): $(DOSH_SRC)
 	@mkdir -p $(BIN_BUILD_DIR)
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CROSS_COMPILE)$(CC) $(CFLAGS) $< $(LDFLAGS) $(LDLIBS) -o $@

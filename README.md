@@ -1,4 +1,4 @@
-DonutOS 4.2
+DonutOS 4.3
 
 Dependencies:
 - `gcc`

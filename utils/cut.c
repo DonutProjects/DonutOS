@@ -1,4 +1,6 @@
+#include <errno.h>
 #include <stdio.h>
+#include <string.h>
 
 int move(const char *src, const char *dst) {
     if (rename(src, dst) == 0) {
@@ -22,15 +24,37 @@ int move(const char *src, const char *dst) {
     size_t bytes;
     while ((bytes = fread(buf, 1, sizeof(buf), in)) > 0) {
         if (fwrite(buf, 1, bytes, out) != bytes) {
-            perror("fwrite");
+            fprintf(stderr, "\033[38;5;196mcut: cannot write '%s': %s\033[0m\n", dst, strerror(errno));
             fclose(in);
             fclose(out);
             return 1;
         }
     }
 
-    fclose(in);
-    fclose(out);
+    if (ferror(in)) {
+        fprintf(stderr, "\033[38;5;196mcut: cannot read '%s': %s\033[0m\n", src, strerror(errno));
+        fclose(in);
+        fclose(out);
+        return 1;
+    }
+
+    if (fflush(out) != 0) {
+        fprintf(stderr, "\033[38;5;196mcut: cannot flush '%s': %s\033[0m\n", dst, strerror(errno));
+        fclose(in);
+        fclose(out);
+        return 1;
+    }
+
+    if (fclose(out) != 0) {
+        fprintf(stderr, "\033[38;5;196mcut: cannot close '%s': %s\033[0m\n", dst, strerror(errno));
+        fclose(in);
+        return 1;
+    }
+
+    if (fclose(in) != 0) {
+        fprintf(stderr, "\033[38;5;196mcut: cannot close '%s': %s\033[0m\n", src, strerror(errno));
+        return 1;
+    }
 
     if (remove(src) != 0) {
         perror("remove");
@@ -50,7 +74,7 @@ int main(int argc, char *argv[]) {
     const char *dst = argv[2];
 
     if (move(src, dst) != 0) {
-        fprintf(stderr, "\033[38;5;196mmv: failed to move '%s' to '%s'\033[0m\n", src, dst);
+        fprintf(stderr, "\033[38;5;196mcut: failed to move '%s' to '%s'\033[0m\n", src, dst);
         return 1;
     }
 

@@ -1,3 +1,6 @@
+#define _DEFAULT_SOURCE
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -5,6 +8,7 @@
 #include <sys/mount.h>
 #include <sys/stat.h>
 #include <sys/reboot.h>
+#include <time.h>
 #include <unistd.h>
 #include <errno.h>
 #include <string.h>
@@ -31,7 +35,8 @@ static void handle_power_request(void) {
     }
 
     kill(-1, SIGTERM);
-    usleep(200000);
+    struct timespec delay = { .tv_sec = 0, .tv_nsec = 200000000L };
+    nanosleep(&delay, NULL);
     kill(-1, SIGKILL);
     sync();
 

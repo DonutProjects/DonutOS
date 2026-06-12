@@ -8,4 +8,4 @@ all: $(INIT_BIN)
 #init
 $(INIT_BIN): $(INIT_SRC)
 	@mkdir -p $(BUILD_DIR)
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CROSS_COMPILE)$(CC) $(CFLAGS) $< $(LDFLAGS) $(LDLIBS) -o $@

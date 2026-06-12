@@ -1,10 +1,12 @@
 #settings
 CROSS_COMPILE ?=
-CC = $(CROSS_COMPILE)gcc
-CFLAGS = -static -Wall -Wno-unused-result -Os -s
+CC            ?= gcc
+CFLAGS        ?= -Wall -Os
+LDFLAGS       ?= -static -s
+LDLIBS        ?=
 
 #ver
-DonutOS_Version = 4.2
+DonutOS_Version = 4.3
 
 #out
 BUILD_DIR = ../build/

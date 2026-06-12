@@ -9,13 +9,13 @@ static int print_file(FILE *fp, const char *filename) {
 
     while ((bytes = fread(buffer, 1, sizeof(buffer), fp)) > 0) {
         if (fwrite(buffer, 1, bytes, stdout) != bytes) {
-            fprintf(stderr, "cat: error writing to stdout\n");
+            fprintf(stderr, "\033[38;5;196mcat: error writing to stdout\033[0m\n");
             return 1;
         }
     }
 
     if (ferror(fp)) {
-        fprintf(stderr, "cat: error reading from %s\n", filename);
+        fprintf(stderr, "\033[38;5;196mcat: error reading from %s\033[0m\n", filename);
         return 1;
     }
 
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
         for (int i = 1; i < argc; ++i) {
             FILE *fp = fopen(argv[i], "r");
             if (!fp) {
-                fprintf(stderr, "cat: cannot open %s: %s\n", argv[i], strerror(errno));
+                fprintf(stderr, "\033[38;5;196mcat: cannot open %s: %s\033[0m\n", argv[i], strerror(errno));
                 exit_code = 1;
                 continue;
             }
